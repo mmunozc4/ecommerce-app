@@ -1,0 +1,198 @@
+<div class="row g-3">
+    <div [ngClass]="isSidePanelVisible ? 'col-md-8' : 'col-12'">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-white">
+                    Product List
+                    <span class="badge bg-light text-primary ms-2">{{ filteredProducts.length }}</span>
+                </h5>
+                <button class="btn btn-sm btn-light" (click)="openSidePanel()">+ New</button>
+            </div>
+
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" placeholder="Buscar productos..."
+                            [(ngModel)]="searchTerm" (input)="filterProducts()" />
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" [(ngModel)]="selectedCategory" (change)="filterProducts()">
+                            <option value="">Todas las categorías</option>
+                            <option *ngFor="let category of categoryList" [value]="category.categoryName">
+                                {{ category.categoryName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let product of pagedProducts">
+                        <div class="card h-100 shadow-sm product-card">
+                            <img [src]="product.productImageUrl" [alt]="product.productName"
+                                class="card-img-top img-fluid p-2 rounded">
+                            <div class="card-body text-center">
+                                <h6 class="card-title fw-bold">{{ product.productName }}</h6>
+                                <p class="text-muted mb-2">Categoría: <b>{{ product.categoryName }}</b></p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        (click)="onEdit(product)">Detalle</button>
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        (click)="onDelete(product)">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p *ngIf="filteredProducts.length === 0" class="text-muted mt-3">
+                    No se encontraron productos.
+                </p>
+
+                <div *ngIf="isLoading" class="text-center my-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando datos...</p>
+                </div>
+
+                <div *ngIf="totalPages > 1" class="pagination-container">
+                    <button class="btn btn-sm btn-outline-primary" (click)="goToPage(1)"
+                        [disabled]="currentPage === 1">« Primero</button>
+                    <button class="btn btn-sm btn-outline-primary" (click)="goToPage(currentPage - 1)"
+                        [disabled]="currentPage === 1">Anterior</button>
+
+                    <button *ngFor="let p of displayPages" class="btn btn-sm"
+                        [ngClass]="{'btn-primary': currentPage === p, 'btn-outline-primary': currentPage !== p}"
+                        (click)="goToPage(p)">
+                        {{ p }}
+                    </button>
+
+                    <button class="btn btn-sm btn-outline-primary" (click)="goToPage(currentPage + 1)"
+                        [disabled]="currentPage === totalPages">Siguiente</button>
+                    <button class="btn btn-sm btn-outline-primary" (click)="goToPage(totalPages)"
+                        [disabled]="currentPage === totalPages">Último »</button>
+                </div>
+
+                <p *ngIf="filteredProducts.length > 0" class="text-muted text-center mt-2">
+                    Mostrando {{ pagedProducts.length }} de {{ filteredProducts.length }} Productos — Página {{
+                    currentPage }} de {{ totalPages }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div #panelForm class="side-panel" [ngClass]="{ 'show': isSidePanelVisible, 'hide': !isSidePanelVisible }">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-white">Producto nuevo</h5>
+                    <button class="btn btn-sm btn-light" (click)="closeSidePanel()">✕</button>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label required">Product Name</label>
+                            <input type="text" id="productName" class="form-control" formControlName="productName">
+                            <div class="text-danger small" *ngIf="productForm.get('productName')?.touched">
+                                <div *ngIf="productForm.get('productName')?.hasError('required')">
+                                    El nombre del producto es obligatorio
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productSku" class="form-label required">Product SKU</label>
+                            <input type="text" id="productSku" class="form-control" formControlName="productSku">
+                            <div class="text-danger small" *ngIf="productForm.get('productSku')?.touched">
+                                <div *ngIf="productForm.get('productSku')?.hasError('required')">
+                                    El SKU es obligatorio
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label for="productPrice" class="form-label required">Precio</label>
+                                <input type="number" id="productPrice" class="form-control"
+                                    formControlName="productPrice">
+                                <div class="text-danger small" *ngIf="productForm.get('productPrice')?.touched">
+                                    <div *ngIf="productForm.get('productPrice')?.hasError('required')">
+                                        El precio es obligatorio
+                                    </div>
+                                    <div *ngIf="productForm.get('productPrice')?.hasError('min')">
+                                        El precio debe ser mayor a 0
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="deliveryTime" class="form-label">Delivery Time</label>
+                                <input type="text" id="deliveryTime" class="form-control"
+                                    formControlName="deliveryTime">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productShortName" class="form-label required">Nombre corto</label>
+                            <input type="text" id="productShortName" class="form-control"
+                                formControlName="productShortName">
+                            <div class="text-danger small" *ngIf="productForm.get('productShortName')?.touched">
+                                <div *ngIf="productForm.get('productShortName')?.hasError('required')">
+                                    El nombre corto es obligatorio
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category" class="form-label required">Categoría</label>
+                            <select id="category" class="form-select" formControlName="categoryId">
+                                <option [ngValue]="null">Seleccione una categoría</option>
+                                <option *ngFor="let category of categoryList" [value]="category.categoryId">
+                                    {{ category.categoryName }}
+                                </option>
+                            </select>
+                            <div class="text-danger small" *ngIf="productForm.get('categoryId')?.touched">
+                                <div *ngIf="productForm.get('categoryId')?.hasError('required')">
+                                    La categoría es obligatoria
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label required">Descripción</label>
+                            <textarea id="productDescription" class="form-control" rows="3"
+                                formControlName="productDescription"></textarea>
+                            <div class="text-danger small" *ngIf="productForm.get('productDescription')?.touched">
+                                <div *ngIf="productForm.get('productDescription')?.hasError('required')">
+                                    La descripción es obligatoria
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productImageUrl" class="form-label required">Imagen URL</label>
+                            <input type="url" id="productImageUrl" class="form-control"
+                                formControlName="productImageUrl">
+                            <div class="text-danger small" *ngIf="productForm.get('productImageUrl')?.touched">
+                                <div *ngIf="productForm.get('productImageUrl')?.hasError('required')">
+                                    La URL de la imagen es obligatoria
+                                </div>
+                                <div *ngIf="productForm.get('productImageUrl')?.hasError('pattern')">
+                                    Debe ser una URL válida que comience con http o https
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">Reset</button>
+                            <button type="submit" class="btn btn-success"
+                                *ngIf="productForm.value.productId === 0">Create</button>
+                            <button type="submit" class="btn btn-warning"
+                                *ngIf="productForm.value.productId !== 0">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

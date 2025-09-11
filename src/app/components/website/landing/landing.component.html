@@ -1,0 +1,71 @@
+<header class="header">
+  <div class="logo">
+    <span>Tienda</span>
+  </div>
+
+  <nav class="navbar">
+    <a routerLink="/login"><fa-icon [icon]="faUser"></fa-icon> Iniciar sesión</a>
+  </nav>
+</header>
+
+<div class="landing-background">
+  <section class="hero">
+    <div class="hero-text">
+      <h1>
+        Bienvenido a <span class="highlight">Shop</span> 🛒
+      </h1>
+      <p>
+        Tu tienda online favorita ✨ Encuentra <strong>ofertas exclusivas</strong>,
+        <strong>categorías destacadas</strong> y los <strong>productos más vendidos</strong> en un solo lugar.
+      </p>
+      <div class="hero-actions">
+        <button class="cta-btn" routerLink="/shop/category-products">Explorar productos</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-banners">
+    <div class="promo-card promo-offer">
+      <div class="icon"><fa-icon [icon]="faFire"></fa-icon></div>
+      <h3>Ofertas Semanales</h3>
+      <p>Descuentos hasta el <strong>50%</strong> en productos seleccionados.</p>
+    </div>
+    <div class="promo-card promo-shipping">
+      <div class="icon"><fa-icon [icon]="faTruck"></fa-icon></div>
+      <h3>Envío Gratis</h3>
+      <p>En compras superiores a <strong>USD 50</strong>.</p>
+    </div>
+    <div class="promo-card promo-featured">
+      <div class="icon"><fa-icon [icon]="faStar"></fa-icon></div>
+      <h3>Más Vendidos</h3>
+      <p>Los productos favoritos y mejor valorados por clientes.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <h2 class="section-title">Novedades</h2>
+
+    <div *ngIf="isLoading" class="loader-overlay">
+      <div class="spinner"></div>
+      <p class="loading-text">Cargando...</p>
+    </div>
+
+    <main class="products-grid" *ngIf="!isLoading && productList.length > 0">
+      <div class="product-card" *ngFor="let product of productList">
+        <div class="image-wrapper">
+          <img [src]="product.productImageUrl" [alt]="product.productName" />
+          <span class="badge">Nuevo</span>
+        </div>
+        <div class="product-info">
+          <h3>{{ product.productName }}</h3>
+          <p class="category">Categoría: {{ product.categoryName }}</p>
+          <p class="price">USD {{ product.productPrice }}</p>
+        </div>
+      </div>
+    </main>
+
+    <div *ngIf="!isLoading && productList.length === 0" class="text-center my-5 text-light">
+      <p>No se encontraron productos.</p>
+    </div>
+  </div>
+</div>

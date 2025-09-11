@@ -1,0 +1,52 @@
+<div class="row mb-4">
+    <div class="col-12 d-flex gap-2">
+        <input type="text" class="form-control" placeholder="Buscar categoría..." [(ngModel)]="searchTerm"
+            (input)="filterCategories()" />
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <form (ngSubmit)="createCategory()" class="d-flex gap-2">
+            <input type="text" class="form-control" placeholder="Nueva categoría" [(ngModel)]="newCategoryName"
+                name="categoryName" required />
+            <button class="btn btn-success" type="submit">Agregar</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Categoría</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let category of filteredCategories; let index = index">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ category.categoryName }}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-danger" (click)="deleteCategory(category)">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p *ngIf="filteredCategories.length === 0" class="text-muted mt-3">
+                No se encontraron categorías.
+            </p>
+            <div *ngIf="isLoading" class="text-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-2">Cargando datos...</p>
+            </div>
+        </div>
+    </div>
+</div>

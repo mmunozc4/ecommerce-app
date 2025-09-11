@@ -1,0 +1,35 @@
+.navbar {
+  padding: 0.75rem 1rem;
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: var(--text-dark) !important;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary) !important;
+}
+
+.nav-link.active {
+  color: var(--primary) !important;
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary);
+}
+
+.pages {
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.pages .container {
+  width: 80%;
+}

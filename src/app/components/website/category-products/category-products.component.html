@@ -1,0 +1,130 @@
+<header class="header">
+  <div class="logo">
+    <span routerLink="/shop">Tienda</span>
+  </div>
+
+  <div class="search-filters">
+    <div class="search">
+      <input type="text" placeholder="Buscar productos..." [(ngModel)]="searchTerm" (input)="filterProducts()" />
+      <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
+    </div>
+
+    <div class="filter">
+      <select [(ngModel)]="selectedCategory" (change)="filterProducts()">
+        <option value="">Todas las categorías</option>
+        <option *ngFor="let cat of categoryList" [value]="cat.categoryName">
+          {{ cat.categoryName }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a routerLink="/login">
+      <fa-icon [icon]="faUser"></fa-icon> Iniciar sesión
+    </a>
+
+    <div class="cart-wrapper">
+      <a>
+        <fa-icon [icon]="faShoppingCart"></fa-icon> Carrito ({{ cart.length }})
+      </a>
+
+      <div class="cart-dropdown" *ngIf="cart.length > 0">
+        <ul>
+          <li *ngFor="let item of cart">
+            <span>{{ item.productName }}</span>
+            <span>x{{ item.quantity }}</span>
+            <button class="remove-btn" (click)="removeFromCart(item.productId)">
+              <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+          </li>
+        </ul>
+        <button (click)="goToCheckout()">Checkout</button>
+      </div>
+
+      <div class="cart-dropdown empty" *ngIf="cart.length === 0">
+        <p>Carrito vacío</p>
+      </div>
+    </div>
+  </nav>
+
+</header>
+
+
+<div class="landing-background">
+  <div class="container">
+    <div *ngIf="isLoading" class="loader-overlay">
+      <div class="spinner"></div>
+      <p class="loading-text">Cargando datos...</p>
+    </div>
+
+    <main class="products-grid" *ngIf="!isLoading && pagedProducts.length > 0">
+      <div class="product-card" *ngFor="let product of pagedProducts" (click)="openProductModal(product)">
+        <div class="image-wrapper">
+          <img [src]="product.productImageUrl" [alt]="product.productName" />
+        </div>
+        <div class="product-info">
+          <h3>{{ product.productName }}</h3>
+          <p class="category">Categoría: {{ product.categoryName }}</p>
+          <p class="price">USD {{ product.productPrice }}</p>
+        </div>
+      </div>
+    </main>
+
+    <div *ngIf="!isLoading && filteredProducts.length === 0" class="text-center my-5 text-light">
+      <p>No se encontraron productos.</p>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button (click)="goToPage(1)" [disabled]="currentPage === 1">« Primero</button>
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+
+      <button *ngFor="let p of displayPages" (click)="goToPage(p)" [class.active]="currentPage === p">
+        {{ p }}
+      </button>
+
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Siguiente</button>
+      <button (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages">Último »</button>
+    </div>
+
+    <div class="pagination-info" *ngIf="!isLoading">
+      <small>Mostrando {{ pagedProducts.length }} de {{ filteredProducts.length }} productos — Página {{ currentPage }}
+        / {{ totalPages }}</small>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal-overlay" *ngIf="isModalOpen">
+  <div class="modal-content modal-two-columns">
+    <button class="close-btn" (click)="closeModal()">
+      <fa-icon [icon]="faTimes"></fa-icon>
+    </button>
+
+    <div class="modal-left">
+      <img [src]="selectedProduct.productImageUrl" [alt]="selectedProduct.productName" />
+    </div>
+
+    <div class="modal-right" *ngIf="selectedProduct">
+      <h2>{{ selectedProduct.productName }}</h2>
+      <h4 class="short-name">{{ selectedProduct.productShortName }}</h4>
+      <p class="sku"><strong>SKU:</strong> {{ selectedProduct.productSku }}</p>
+      <p class="delivery"><strong>Tiempo de entrega:</strong> {{ selectedProduct.deliveryTimeSpan || 'No especificado'
+        }}
+      </p>
+      <p class="description">{{ selectedProduct.productDescription }}</p>
+
+      <p class="price">USD {{ selectedProduct.productPrice }}</p>
+
+      <div class="quantity">
+        <label for="qty">Cantidad:</label>
+        <input type="number" id="qty" min="1" [(ngModel)]="selectedQuantity" />
+      </div>
+
+      <button class="add-cart-btn" (click)="addToCart()">
+        <fa-icon [icon]="faShoppingCart"></fa-icon> Agregar al carrito
+      </button>
+    </div>
+  </div>
+</div>

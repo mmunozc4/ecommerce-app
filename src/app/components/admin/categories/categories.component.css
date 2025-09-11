@@ -1,0 +1,65 @@
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-white);
+  box-shadow: 0 4px 12px var(--overlay);
+}
+
+.custom-table thead {
+  background: linear-gradient(135deg, var(--blue-gradient-1), var(--blue-gradient-2));
+  color: var(--bg-white);
+  font-weight: 600;
+}
+
+.custom-table th,
+.custom-table td {
+  vertical-align: middle;
+  padding: 12px;
+}
+
+.custom-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.custom-table tbody tr:hover {
+  background-color: var(--bg-light);
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 0.875rem;
+  border-radius: 6px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border: none;
+  color: var(--bg-white);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  border: none;
+  color: var(--bg-white);
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+  /* tono más oscuro */
+}
+
+form input {
+  max-width: 300px;
+}
+
+form button {
+  white-space: nowrap;
+}
+
+input.form-control {
+  max-width: 300px;
+}

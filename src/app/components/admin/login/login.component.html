@@ -1,0 +1,30 @@
+<div class="parent">
+  <div class="container">
+    <div class="left-section"></div>
+    <div class="right-section">
+      <div class="login-container">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <h2 class="login-title"><i class="fas fa-user-circle"></i> Inicio de sesión</h2>
+
+          <div class="form-control">
+            <i class="fas fa-user icon"></i>
+            <input type="text" placeholder="Username" formControlName="username">
+          </div>
+          <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="error">
+            El nombre es obligatorio
+          </div>
+
+          <div class="form-control">
+            <i class="fas fa-lock icon"></i>
+            <input type="password" placeholder="Password" formControlName="password">
+          </div>
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
+            La contraseña es obliagtoria
+          </div>
+
+          <button type="submit" [disabled]="loginForm.invalid">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

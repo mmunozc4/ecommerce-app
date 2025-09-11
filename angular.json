@@ -27,12 +27,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -48,7 +43,8 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "baseHref": "/ecommerce/"
             },
             "development": {
               "optimization": false,
@@ -67,6 +63,9 @@
             "development": {
               "buildTarget": "ecommerce:build:development"
             }
+          },
+          "options": {
+            "proxyConfig": "proxy.config.json"
           },
           "defaultConfiguration": "development"
         },

@@ -10,6 +10,7 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   getAllProducts() {
+    console.log('🌐 Endpoint:', `${Constant.API__END_POINT}/Login`);
     return this.http.get(Constant.API__END_POINT + Constant.METHOD.GET_ALL_PRODUCTS)
   }
 

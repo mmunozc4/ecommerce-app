@@ -1,9 +1,6 @@
-import fetch from "node-fetch";
-
 export default async function handler(req, res) {
   let { path } = req.query;
-  console.log("ESTE ES EL PATH",path);
-  
+  console.log("ESTE ES EL PATH", path);
 
   // Asegurar que siempre sea un array
   if (!Array.isArray(path)) {
@@ -11,8 +8,7 @@ export default async function handler(req, res) {
   }
 
   const apiUrl = `https://freeapi.miniprojectideas.com/api/BigBasket/${path.join("/")}`;
-  console.log("Esta es la URL",apiUrl);
-  
+  console.log("Esta es la URL", apiUrl);
 
   try {
     const response = await fetch(apiUrl, {

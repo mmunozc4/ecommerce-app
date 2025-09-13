@@ -1,0 +1,10 @@
+{
+  "/api/BigBasket": {
+    "target": "https://freeapi.miniprojectideas.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/BigBasket": "/api/BigBasket"
+    }
+  }
+}

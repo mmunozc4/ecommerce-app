@@ -50,7 +50,7 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/ecommerce-app/"
+              "baseHref": "/"
             },
             "development": {
               "optimization": false,

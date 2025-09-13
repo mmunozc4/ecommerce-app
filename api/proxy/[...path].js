@@ -1,50 +1,31 @@
 export default async function handler(req, res) {
+  const { path } = req.query; // ej: ["GetAllProducts"]
+
+  // Construir URL
+  const apiUrl = `https://freeapi.miniprojectideas.com/api/BigBasket/${path.join("/")}`;
+
+  console.log("🔗 Proxying to:", apiUrl); // Log en vercel
+
   try {
-    const pathArray = req.query.path || [];
-    const suffix = Array.isArray(pathArray) ? pathArray.join('/') : pathArray;
-
-    const originalUrl = req.url || '';
-    let qs = '';
-    if (originalUrl.includes('?')) {
-      qs = originalUrl.slice(originalUrl.indexOf('?'));
-    }
-
-    const targetUrl = `https://freeapi.miniprojectideas.com/api/BigBasket/${suffix}${qs}`;
-
-    const getRawBody = () =>
-      new Promise((resolve, reject) => {
-        let data = '';
-        req.on('data', chunk => (data += chunk));
-        req.on('end', () => resolve(data));
-        req.on('error', err => reject(err));
-      });
-
-    const rawBody = await getRawBody();
-
-    const outgoingHeaders = {};
-    if (req.headers['content-type']) {
-      outgoingHeaders['Content-Type'] = req.headers['content-type'];
-    }
-
-    const fetchRes = await fetch(targetUrl, {
+    const response = await fetch(apiUrl, {
       method: req.method,
-      headers: outgoingHeaders,
-      body: ['GET', 'HEAD'].includes(req.method) ? undefined : rawBody || undefined,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: req.method !== "GET" ? JSON.stringify(req.body) : undefined,
     });
 
-    const responseText = await fetchRes.text();
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-    res.status(fetchRes.status);
-    const ct = fetchRes.headers.get('content-type');
-    if (ct) res.setHeader('Content-Type', ct);
-
-    res.send(responseText);
-  } catch (err) {
-    console.error('Proxy error:', err);
-    res.status(500).json({ error: 'Proxy error', details: err.message });
+    // Obtener la respuesta como texto o JSON
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      res.status(response.status).json(data);
+    } else {
+      const text = await response.text();
+      res.status(response.status).send(text);
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Proxy Error", details: error.message });
   }
 }
+  

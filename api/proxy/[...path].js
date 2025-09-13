@@ -1,10 +1,17 @@
 export default async function handler(req, res) {
-  const { path } = req.query; // ej: ["GetAllProducts"]
+  let path = req.query.path;
 
-  // Construir URL
+  // Aseguramos que siempre sea array
+  if (!path) {
+    return res.status(400).json({ error: "Path not provided" });
+  }
+  if (!Array.isArray(path)) {
+    path = [path];
+  }
+
   const apiUrl = `https://freeapi.miniprojectideas.com/api/BigBasket/${path.join("/")}`;
 
-  console.log("🔗 Proxying to:", apiUrl); // Log en vercel
+  console.log("🔗 Proxying to:", apiUrl);
 
   try {
     const response = await fetch(apiUrl, {
@@ -15,7 +22,6 @@ export default async function handler(req, res) {
       body: req.method !== "GET" ? JSON.stringify(req.body) : undefined,
     });
 
-    // Obtener la respuesta como texto o JSON
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
@@ -28,4 +34,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: "Proxy Error", details: error.message });
   }
 }
-  

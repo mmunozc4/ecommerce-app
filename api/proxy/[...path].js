@@ -1,5 +1,10 @@
 export default async function handler(req, res) {
   let { path } = req.query;
+    console.log("👉 Método:", req.method);
+  console.log("👉 Query:", req.query);
+  console.log("👉 URL:", req.url);
+  console.log("👉 Body:", req.body);
+  
   console.log("ESTE ES EL PATH", path);
 
   // Asegurar que siempre sea un array
